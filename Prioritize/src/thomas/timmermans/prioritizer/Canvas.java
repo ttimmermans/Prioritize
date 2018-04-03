@@ -29,11 +29,12 @@ public class Canvas
     private Image canvasImage;
     
     Block currentBlock;
-    
-    int xPositionMouse; // x Position of Mouse
-	int yPositionMouse; // y Position of Mouse
-    
-    private static final int groundPosition = 280;      // y position of ground
+	
+    /* The following offsets represent the difference between the block's 
+     * coordinates, which is always the upper left corner of the block, and the 
+     * position of the mouse on the canvas. */
+	int xOffset;
+	int yOffset;
 
     /**
      * Create a Canvas with default height, width and background color 
@@ -42,7 +43,7 @@ public class Canvas
      */
     public Canvas(String title)
     {
-        this(title, 300, 300, Color.white);
+        this(title, 300, 300, Color.WHITE);
     }
 
     /**
@@ -53,7 +54,7 @@ public class Canvas
      */
     public Canvas(String title, int width, int height)
     {
-        this(title, width, height, Color.white);
+        this(title, width, height, Color.WHITE);
     }
 
     /**
@@ -330,6 +331,16 @@ public class Canvas
 						System.out.println("Block clicked!");
 						// initialize 'Moving'
 						currentBlock = block;
+						
+						xOffset = canvas.getMousePosition().x - currentBlock.getX();
+						yOffset = canvas.getMousePosition().y - currentBlock.getY();
+						
+						System.out.println("currentBlock X: " + currentBlock.getX());
+						System.out.println("currentBlock Y: " + currentBlock.getY());
+						System.out.println("canvasMousePosition X: " + canvas.getMousePosition().x);
+						System.out.println("canvasMousePosition Y: " + canvas.getMousePosition().y);
+						System.out.println("xOffset: " + xOffset);
+						System.out.println("yOffset: " + yOffset);
 					}
 				}
 			}
@@ -355,13 +366,19 @@ public class Canvas
 					
 					eraseRectangle(currentBlock.getX(), currentBlock.getY(), 
 							currentBlock.getLength(), currentBlock.getLength());
-
-					int newX = canvas.getMousePosition().x;
-					int newY = canvas.getMousePosition().y;
+					
+					System.out.println("Block x: " + currentBlock.getX());
+					System.out.println("Block y: " + currentBlock.getY());
+					
+					int newX = canvas.getMousePosition().x - xOffset;
+					int newY = canvas.getMousePosition().y - yOffset;
 					
 					currentBlock.setXY(newX, newY);
 					
 					fillRectangle(newX, newY, currentBlock.getLength(), currentBlock.getLength());
+					
+					System.out.println("NEW x: " + currentBlock.getX());
+					System.out.println("NEW y: " + currentBlock.getY());
 				}
 			}
 			public void mouseMoved(MouseEvent e) {
@@ -385,14 +402,6 @@ public class Canvas
         graphic.fillRect(0, 0, width, height);
         graphic.drawImage(oldImage, 0, 0, null);
         frame.pack();
-    }
-    
-    /**
-     * Returns the y position of the ground.
-     * @return   the y position
-     */
-    public int getGroundPosition() {
-    	return groundPosition;
     }
 
     /**
